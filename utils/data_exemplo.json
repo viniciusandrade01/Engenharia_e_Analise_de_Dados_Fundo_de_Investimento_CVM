@@ -1,0 +1,29 @@
+{
+    "source": {
+        "generalLink": {
+            "url":"https://www.leroymerlin.com.br/",
+            "params": {
+                "year": "2023",          
+                "month": "03",
+                "directory": "blo",
+                "namehtml": "Html_"
+                
+            },
+            "filetype":"csv",
+            "bla": ["", "", ""],
+            "ble": "",
+            "bli": ""
+        }
+    },
+    "database": {
+        "host": "seu_host",
+        "username": "seu_usuario",
+        "password": "sua_senha",
+        "database_name": "nome_do_banco"
+    },
+    "aws_account": {
+        "access_key": "sua_access_key",
+        "secret_key": "sua_secret_key",
+        "region": "sua_região"
+    }
+}

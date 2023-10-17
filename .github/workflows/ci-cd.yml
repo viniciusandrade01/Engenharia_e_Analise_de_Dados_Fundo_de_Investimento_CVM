@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.6.1'
+
+      - name: Checkout código
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          ref: main
+
+      - name: Configurar ambiente virtual
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+
+      - name: Gerar e instalar dependências
+        run: |
+          pip freeze > requirements.txt
+          pip install -r requirements.txt
+          
