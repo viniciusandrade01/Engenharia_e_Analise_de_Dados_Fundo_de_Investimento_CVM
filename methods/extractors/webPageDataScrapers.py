@@ -18,6 +18,9 @@ class WebPageDataScrapers:
     def __init__(self):
         self.client = AboutAWS()
 
+    def readZipFile(self, nome_zip: str, namedirectory: str):
+        return zipfile.ZipFile(f"{namedirectory}/{nome_zip}")
+
     def extractZip(self, nome_zip: str, namedirectory: str):
         generalTools.makeDirectory(namedirectory)
         with zipfile.ZipFile(nome_zip, 'r') as zip_ref:
@@ -28,12 +31,10 @@ class WebPageDataScrapers:
         os.remove(nome_zip)
 
     def downloadUrl(self, response, nome_arquivo, namedirectory):
-        #nome_arquivo = f"{namedirectory}/{nome_arquivo.split('?')[0]}{generalTools.increase()}.txt" if '?' in nome_arquivo else f"{namedirectory}/{nome_arquivo}{generalTools.increase()}.txt"
-        for file in nome_arquivo:
-            with open(f"{namedirectory}/{file}", 'wb') as file:
-                file.write(response.content)
-                #client = self.client.createClient('s3')
-                #self.client.uploadFile(client, nome_arquivo, 'engdadostest', nome_arquivo)
+        with open(f"{namedirectory}/{nome_arquivo}", 'wb') as file:
+            file.write(response.content)
+            #client = self.client.createClient('s3')
+            #self.client.uploadFile(client, nome_arquivo, 'engdadostest', nome_arquivo)
 
     def requestGetDefault(self, link: str):
         try:

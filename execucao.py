@@ -25,13 +25,19 @@ def main():
         jsonData = generalTools.openJson()
         logger_config.setup_logger(generalTools.getDate())
         
-        name_directory = f"{jsonData['source']['generalLink']['params']['directory']}{generalTools.hyphenToNull(generalTools.splitByEmptySpace(generalTools.getDate())[0])}"
+        pd.options.display.float_format = '{:.4f}'.format
 
+        name_directory = f"{jsonData['source']['generalLink']['params']['directory']}{generalTools.hyphenToNull(generalTools.splitByEmptySpace(generalTools.getDate())[0])}"
+        name_file = f"inf_diario_fi_{jsonData['source']['generalLink']['params']['year']}{jsonData['source']['generalLink']['params']['month']}.zip"
         generalTools.makeDirectory(name_directory)
 
-        html, soup = webPageDataScrapers.requestGetDefault(f"{jsonData['source']['generalLink']['url']}inf_diario_fi_{jsonData['source']['generalLink']['params']['year']}{jsonData['source']['generalLink']['params']['month']}.zip")
-        webPageDataScrapers.downloadUrl(html, f"{jsonData['source']['generalLink']['params']['namehtml']}", name_directory)
+        html, soup = webPageDataScrapers.requestGetDefault(f"{jsonData['source']['generalLink']['url']}{name_file}")
+        webPageDataScrapers.downloadUrl(html, name_file, name_directory)
+        zip_file = webPageDataScrapers.readZipFile(name_file, name_directory)
         logging.info("INFORMAÇÕES DA URL BAIXADA COM SUCESSO.")
+
+        dados_fundos = fileSavers.readDeepData(zip_file)
+        dados_cadastro = fileSavers.readRegistrationData()
         
         
 
