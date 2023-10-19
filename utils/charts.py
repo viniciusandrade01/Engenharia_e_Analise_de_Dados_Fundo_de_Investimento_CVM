@@ -14,19 +14,25 @@ class GeneralCharts:
         plt.title(title)
         plt.show()
 
-    def createChart(self, size: list, piores_produtos, grupo):
+    def createChart(self, size: list, nomes_fundos, cinco_maiores_valores, valores_cota, cnpjs_fundos):
+        # Cria o gráfico de barras
         plt.figure(figsize=(size[0], size[1]))
-        for index, row in piores_produtos.iterrows():
-            plt.text(row['Faixa_de_Preco'].mid, row['Metrica_Ruim'], f"{row['Produto'].split(' ')[-1]}: {row['Metrica_Ruim']:.2f}", ha='center', va='bottom')
-        plt.bar(grupo['Faixa_de_Preco_Mid'], grupo['Metrica_Ruim'], width=0.08, alpha=0.7)
-        plt.xlabel('Faixa de Preco')
-        plt.ylabel('Metrica Ruim')
-        plt.xticks(rotation=45)
-        plt.title('Piores Produtos por Faixa de Preço e Produtos')
+        bars = plt.bar(nomes_fundos, cinco_maiores_valores, color='skyblue')
 
-        # Convertendo os valores das faixas em strings para o rótulo do eixo x
-        rotulos_faixas = [str(faixa) for faixa in grupo['Faixa_de_Preco']]
-        plt.xticks(grupo['Faixa_de_Preco_Mid'], rotulos_faixas)
+        # Adiciona o nome do fundo ao passar o mouse sobre a barra
+        plt.xticks(rotation=45, ha='right')
+        plt.ylabel('Valor do Patrimônio Líquido')
 
-        plt.savefig(f"Produtos_{generalTools.hyphenToNull(generalTools.splitByEmptySpace(self.data)[0])}/Piores_Produtos_{generalTools.hyphenToNull(generalTools.splitByEmptySpace(self.data)[0])}.png")
+        # Adiciona os rótulos em cima das barras
+        plt.bar_label(bars, labels=[f'{valor:.2f}\n{cnpj}\n{nome}' for valor, cnpj, nome in zip(cinco_maiores_valores, cnpjs_fundos, nomes_fundos)], 
+                    label_type='edge', fontsize=8)
+
+        # Adiciona o valor da cota e o nome do fundo sobre cada barra
+        #for i, valor in enumerate(cinco_maiores_valores):
+        #    plt.text(i, valor + 0.1, f'Valor: {valor}\nCota: {valores_cota.iloc[i]}', ha='center')
+
+        plt.xlabel('Nome do Fundo')
+        plt.title('5 Maiores Valores de Patrimônio Líquido')
+        plt.tight_layout()
+        plt.savefig(f"bla.png")
         plt.show() 

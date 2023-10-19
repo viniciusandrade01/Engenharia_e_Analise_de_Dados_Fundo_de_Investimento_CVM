@@ -101,3 +101,17 @@ class FileSavers:
 
         dados_cadastro = dados_cadastro.drop_duplicates()
         return dados_cadastro
+    
+    def mergeDataFrames(self, dados_fundos_filtrado, dados_cadastro):
+        base_final = pd.merge(dados_fundos_filtrado, dados_cadastro, how="left", left_on =["CNPJ_FUNDO"], right_on = ["CNPJ_FUNDO"])
+
+        return base_final[['CNPJ_FUNDO', 'DENOM_SOCIAL', 'TP_FUNDO', 'DT_COMPTC', 'VL_TOTAL', 'VL_QUOTA', 'VL_PATRIM_LIQ', 'NR_COTST']]
+    
+    def gettingTheBestInvestmentFunds(self, base_final: pd.DataFrame):
+        cinco_maiores_valores = base_final['VL_PATRIM_LIQ'].nlargest(5)
+        nomes_fundos = base_final.loc[cinco_maiores_valores.index, 'DENOM_SOCIAL']
+        valores_cota = base_final.loc[cinco_maiores_valores.index, 'VL_QUOTA']
+        cnpjs_fundos = base_final.loc[cinco_maiores_valores.index, 'CNPJ_FUNDO']
+        
+
+        return cinco_maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos

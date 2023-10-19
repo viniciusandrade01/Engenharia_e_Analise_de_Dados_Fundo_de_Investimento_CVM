@@ -36,6 +36,12 @@ class WebPageDataScrapers:
             #client = self.client.createClient('s3')
             #self.client.uploadFile(client, nome_arquivo, 'engdadostest', nome_arquivo)
 
+    def downloadUrlGroup(self, response, nome_arquivo, namedirectory):
+        with open(f"{namedirectory}/{nome_arquivo}", 'wb') as file:
+            file.write(response.content)
+            #client = self.client.createClient('s3')
+            #self.client.uploadFile(client, nome_arquivo, 'engdadostest', nome_arquivo)
+
     def requestGetDefault(self, link: str):
         try:
             html = rq.get(link)
@@ -44,6 +50,7 @@ class WebPageDataScrapers:
 
         except rq.exceptions.HTTPError as http_err:
             logging.error(f"Erro HTTP: {http_err}")
+            logging.error("Recurso não encontrado - Erro 404.") if html.status_code == 404 else  logging.error("Outro erro HTTP ocorreu.")
         except rq.exceptions.RequestException as req_err:
             logging.error(f"Erro de Requisição: {req_err}")
         except Exception as err:

@@ -67,17 +67,8 @@ class TransformData:
             elif arg == df.iloc[0][-2]:
                 return df
 
-    def ajustingFinalDataFrame(self, df: pd.DataFrame):
-        novo_df = pd.DataFrame()
-        novo_df['Situacao'] = df['Situacao'].map(lambda x: x.title())
-        novo_df['Var_Desconto'] = df['Var_Desconto'].map(lambda x: int(generalTools.percentageToEmpty(x)))
-        novo_df['Descricao'] = df['Descricao'].map(lambda x: f"'{generalTools.hyphenToEmptySpace(generalTools.plusToNull(generalTools.removeMinus(generalTools.removeParentheses(generalTools.removeEllipsis(x.replace('”',''))))))}'")
-        novo_df['Codigo'] = df['Codigo'].map(lambda x: f"'{generalTools.splitByEmptySpace(x)[-1]}'")
-        novo_df['Avaliacao'] = df['Avaliacao'].map(lambda x: generalTools.removeParentheses(x))
-        novo_df['Preco_Original'] = df['Preco_Original'].map(lambda x: generalTools.replaceCommaToDot(generalTools.dotToEmpty(generalTools.removeEmptySpaceInStr(generalTools.brlToEmpty(x).replace("cada","")))))
-        novo_df['Preco_A_Vista'] = df['Preco_A_Vista'].map(lambda x: generalTools.replaceCommaToDot(generalTools.dotToEmpty(generalTools.removeEmptySpaceInStr(generalTools.brlToEmpty(x).replace("cada","")))))
-        novo_df['Produto'] = df['Produto'].map(lambda x: generalTools.hyphenToEmptySpace(x.title()))
+    def gettingMonthlyReturn(self, dados_fundos: pd.DataFrame):
+        data_inicio_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[0]
+        data_fim_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[-1]
 
-        novo_df.reset_index(inplace=True)
-        novo_df.drop('index', axis=1, inplace=True)
-        return novo_df
+        return dados_fundos[(dados_fundos['DT_COMPTC'].isin([data_inicio_mes, data_fim_mes]))]
