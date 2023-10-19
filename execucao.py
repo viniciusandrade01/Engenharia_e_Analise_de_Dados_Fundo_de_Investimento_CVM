@@ -1,13 +1,9 @@
-import os
 import pandas as pd
 import requests as rq
 from methods.loaders.filesSave import FileSavers
 from methods.transformers.transformData import TransformData
 from methods.extractors.webPageDataScrapers import WebPageDataScrapers
 from utils.tools import GeneralTools
-#from utils.driver import DriverChrome
-#from utils.selenium import GeneralSelenium
-#from utils.selenium import GeneralSelenium
 import utils.logger_config as logger_config
 from utils.charts import GeneralCharts 
 from utils.aws import AboutAWS
@@ -20,8 +16,6 @@ def main():
         webPageDataScrapers = WebPageDataScrapers()
         generalTools = GeneralTools()
         generalCharts = GeneralCharts()
-        #driverChrome = DriverChrome()
-        #selenium = GeneralSelenium()
         df = pd.DataFrame()
         client = AboutAWS()
         # Variável contendo informações das moedas a serem coletadas, aws e banco de dados
@@ -32,16 +26,19 @@ def main():
         pd.options.display.float_format = '{:.4f}'.format
 
         name_directory = f"{jsonData['source']['generalLink']['params']['directory']}{generalTools.hyphenToNull(generalTools.splitByEmptySpace(generalTools.getDate())[0])}"
-        name_file = f"inf_diario_fi_{jsonData['source']['generalLink']['params']['year']}{jsonData['source']['generalLink']['params']['month']}.zip"
+        nameFile = transformData.getFileName(jsonData)
+        nameFile = iter([nameFile]) if isinstance(nameFile, str) else iter(nameFile)
         generalTools.makeDirectory(name_directory)
+        dados_fundos = []
 
-        html, soup = webPageDataScrapers.requestGetDefault(f"{jsonData['source']['generalLink']['url']}{name_file}")
-        webPageDataScrapers.downloadUrl(html, name_file, name_directory)
-        webPageDataScrapers.downloadUrlGroup(html, name_file, name_directory)
-        zip_file = webPageDataScrapers.readZipFile(name_file, name_directory)
-        logging.info("INFORMAÇÕES DA URL BAIXADA COM SUCESSO.")
+        for file in nameFile:
+            html, soup = webPageDataScrapers.requestGetDefault(f"{jsonData['source']['generalLink']['url']}{file}")
+            webPageDataScrapers.downloadUrl(html, file, name_directory)
+            logging.info("INFORMAÇÕES DA URL BAIXADA COM SUCESSO.")
+            zip_file = webPageDataScrapers.readZipFile(file, name_directory)
+            dados_fundos.append(fileSavers.readDeepData(zip_file))
 
-        dados_fundos = fileSavers.readDeepData(zip_file)
+        #dados_fundos = fileSavers.readDeepData(zip_file)
         dados_cadastro = fileSavers.readRegistrationData()
         dados_fundos_filtrado = transformData.gettingMonthlyReturn(dados_fundos)
         base_final = fileSavers.mergeDataFrames(dados_fundos_filtrado, dados_cadastro)

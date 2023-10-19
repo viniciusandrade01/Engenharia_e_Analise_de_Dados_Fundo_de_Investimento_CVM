@@ -103,7 +103,10 @@ class FileSavers:
         return dados_cadastro
     
     def mergeDataFrames(self, dados_fundos_filtrado, dados_cadastro):
-        base_final = pd.merge(dados_fundos_filtrado, dados_cadastro, how="left", left_on =["CNPJ_FUNDO"], right_on = ["CNPJ_FUNDO"])
+        base_final = pd.DataFrame()
+        for fundos_filtrados in dados_fundos_filtrado:
+            merged_df = pd.merge(fundos_filtrados, dados_cadastro, how="left", left_on =["CNPJ_FUNDO"], right_on = ["CNPJ_FUNDO"])
+            base_final = pd.concat([base_final, merged_df], ignore_index=True)
 
         return base_final[['CNPJ_FUNDO', 'DENOM_SOCIAL', 'TP_FUNDO', 'DT_COMPTC', 'VL_TOTAL', 'VL_QUOTA', 'VL_PATRIM_LIQ', 'NR_COTST']]
     

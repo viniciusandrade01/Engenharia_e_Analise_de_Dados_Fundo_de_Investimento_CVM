@@ -14,7 +14,7 @@ logger_config.setup_logger(time.strftime("%Y-%m-%d %H:%M:%S"))
 
 class TransformData:
     def __init__(self):
-        pass
+        self.data = generalTools.splitByEmptySpace(generalTools.getDate())[0]
 
     def dfToExcel(self, df: pd.DataFrame, file_name: str, sheet_name='Sheet1'):
         df.to_excel(file_name, sheet_name=sheet_name, index=False)
@@ -66,9 +66,20 @@ class TransformData:
                 df = df.drop(columns=df.columns[len(df.columns)-count:])
             elif arg == df.iloc[0][-2]:
                 return df
+            
+    def getFileName(self, jsonData: dict):
+        if jsonData['source']['generalLink']['params']['year'] != '':
+            return f"{jsonData['source']['generalLink']['params']['namezip']}{jsonData['source']['generalLink']['params']['year']}{jsonData['source']['generalLink']['params']['month']}.zip" 
+        else:
+            datas = pd.date_range(start="2021-01-01", end=self.data, freq='MS').strftime('%Y%m').tolist()
+            return [f"{jsonData['source']['generalLink']['params']['namezip']}{data}.zip" for data in datas]
 
     def gettingMonthlyReturn(self, dados_fundos: pd.DataFrame):
-        data_inicio_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[0]
-        data_fim_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[-1]
-
-        return dados_fundos[(dados_fundos['DT_COMPTC'].isin([data_inicio_mes, data_fim_mes]))]
+        generalData = []
+        for dados in dados_fundos:
+            data_inicio_mes = (dados['DT_COMPTC'].sort_values(ascending = True).unique())[0]
+            data_fim_mes = (dados['DT_COMPTC'].sort_values(ascending = True).unique())[-1]
+            generalData.append(dados[(dados['DT_COMPTC'].isin([data_inicio_mes, data_fim_mes]))])
+            #data_inicio_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[0]
+            #data_fim_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[-1]
+        return generalData

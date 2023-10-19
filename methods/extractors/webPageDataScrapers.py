@@ -36,12 +36,6 @@ class WebPageDataScrapers:
             #client = self.client.createClient('s3')
             #self.client.uploadFile(client, nome_arquivo, 'engdadostest', nome_arquivo)
 
-    def downloadUrlGroup(self, response, nome_arquivo, namedirectory):
-        with open(f"{namedirectory}/{nome_arquivo}", 'wb') as file:
-            file.write(response.content)
-            #client = self.client.createClient('s3')
-            #self.client.uploadFile(client, nome_arquivo, 'engdadostest', nome_arquivo)
-
     def requestGetDefault(self, link: str):
         try:
             html = rq.get(link)
