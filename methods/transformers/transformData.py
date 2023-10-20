@@ -69,7 +69,7 @@ class TransformData:
             
     def getFileName(self, jsonData: dict):
         if jsonData['source']['generalLink']['params']['year'] != '':
-            return f"{jsonData['source']['generalLink']['params']['namezip']}{jsonData['source']['generalLink']['params']['year']}{jsonData['source']['generalLink']['params']['month']}.zip" 
+            return f"{jsonData['source']['generalLink']['params']['namezip']}{jsonData['source']['generalLink']['params']['year']}{jsonData['source']['generalLink']['params']['month']}.zip"
         else:
             datas = pd.date_range(start="2021-01-01", end=self.data, freq='MS').strftime('%Y%m').tolist()
             return [f"{jsonData['source']['generalLink']['params']['namezip']}{data}.zip" for data in datas]
@@ -83,3 +83,8 @@ class TransformData:
             #data_inicio_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[0]
             #data_fim_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[-1]
         return generalData
+    
+    def ajustingColumns(self, base_final: pd.DataFrame):
+        base_final['DENOM_SOCIAL'] = base_final['DENOM_SOCIAL'].apply(lambda x: generalTools.cleaningDataStr(x) if pd.notnull(x) else x)
+
+        return base_final

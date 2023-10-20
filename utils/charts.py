@@ -13,6 +13,25 @@ class GeneralCharts:
         sns.boxplot(y=column, data=df, color=colors)
         plt.title(title)
         plt.show()
+        
+    def createBarhChart(self, size: list, fundos, cnpjs_fundos, patrimonio_liquido, data, nameDirectory, toprange):
+        # Criando o gráfico de barras horizontais
+        plt.figure(figsize=(size[0], size[1]))
+        plt.barh(cnpjs_fundos, patrimonio_liquido, color='green')
+        plt.xlabel('Patrimônio Líquido (R$)')
+        plt.ylabel('Fundos de Investimento')
+        plt.title(f"Top {toprange} Fundos de Investimento ({data})")
+        plt.yticks(cnpjs_fundos, rotation='horizontal')
+        plt.grid(axis='x', linestyle='--', alpha=0.7)
+
+        # Adicionando os CNPJs aos rótulos das barras
+        for index, value in enumerate(patrimonio_liquido):
+            #plt.text(value, index, f' Patrim. Líq.: {list(cnpjs_fundos)[index]}', va='center')
+            plt.text(value, index, f' Patrimônio Líquido: {value}', va='center')
+
+        plt.tight_layout()
+        plt.savefig(f"{nameDirectory}/MelhoresFundos_{data}.png")
+        plt.show() 
 
     def createChart(self, size: list, nomes_fundos, cinco_maiores_valores, valores_cota, cnpjs_fundos):
         # Cria o gráfico de barras

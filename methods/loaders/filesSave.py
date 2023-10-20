@@ -110,11 +110,14 @@ class FileSavers:
 
         return base_final[['CNPJ_FUNDO', 'DENOM_SOCIAL', 'TP_FUNDO', 'DT_COMPTC', 'VL_TOTAL', 'VL_QUOTA', 'VL_PATRIM_LIQ', 'NR_COTST']]
     
-    def gettingTheBestInvestmentFunds(self, base_final: pd.DataFrame):
-        cinco_maiores_valores = base_final['VL_PATRIM_LIQ'].nlargest(5)
-        nomes_fundos = base_final.loc[cinco_maiores_valores.index, 'DENOM_SOCIAL']
-        valores_cota = base_final.loc[cinco_maiores_valores.index, 'VL_QUOTA']
-        cnpjs_fundos = base_final.loc[cinco_maiores_valores.index, 'CNPJ_FUNDO']
-        
+    def gettingTheBestInvestmentFunds(self, base_final: pd.DataFrame, range: int):
+        # Usando, como referência e parâmetro, o último dia como dia 30, e removendo duplicados
+        base_final = base_final[pd.to_datetime(base_final['DT_COMPTC']).dt.day == 30]
 
-        return cinco_maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos
+        # Coletando os 'range' maiores valores, usando como referência o Patrimônio Líquido
+        maiores_valores = base_final['VL_PATRIM_LIQ'].nlargest(range)
+        nomes_fundos = base_final.loc[maiores_valores.index, 'DENOM_SOCIAL']
+        valores_cota = base_final.loc[maiores_valores.index, 'VL_QUOTA']
+        cnpjs_fundos = base_final.loc[maiores_valores.index, 'CNPJ_FUNDO']
+        
+        return maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos

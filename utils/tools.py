@@ -3,6 +3,7 @@ import os
 import datetime
 import logging
 import re
+from unidecode import unidecode
 import pandas as pd
 
 class GeneralTools:
@@ -89,6 +90,9 @@ class GeneralTools:
     
     def upperCase(self, dado: str):
         return dado.upper()
+    
+    def cleaningDataStr(self, data: str):
+        return unidecode(data)
     
     def lowerCase(self, dado: str):
         return dado.lower()

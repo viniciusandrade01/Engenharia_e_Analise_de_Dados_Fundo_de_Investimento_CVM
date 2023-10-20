@@ -27,6 +27,7 @@ def main():
 
         name_directory = f"{jsonData['source']['generalLink']['params']['directory']}{generalTools.hyphenToNull(generalTools.splitByEmptySpace(generalTools.getDate())[0])}"
         nameFile = transformData.getFileName(jsonData)
+        dataRef = nameFile.split("_")[-1].split(".")[0] if isinstance(nameFile, str) else 'HISTÓRICA'
         nameFile = iter([nameFile]) if isinstance(nameFile, str) else iter(nameFile)
         generalTools.makeDirectory(name_directory)
         dados_fundos = []
@@ -42,8 +43,10 @@ def main():
         dados_cadastro = fileSavers.readRegistrationData()
         dados_fundos_filtrado = transformData.gettingMonthlyReturn(dados_fundos)
         base_final = fileSavers.mergeDataFrames(dados_fundos_filtrado, dados_cadastro)
-        cinco_maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos = fileSavers.gettingTheBestInvestmentFunds(base_final)
-        generalCharts.createChart([10, 6], nomes_fundos, cinco_maiores_valores, valores_cota, cnpjs_fundos)
+        maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos = fileSavers.gettingTheBestInvestmentFunds(base_final, jsonData['source']['generalLink']['params']['toprange'])
+        base_final = transformData.ajustingColumns(base_final)
+        generalCharts.createBarhChart([10, 6], nomes_fundos, cnpjs_fundos, maiores_valores, dataRef, name_directory, jsonData['source']['generalLink']['params']['toprange'])
+        #generalCharts.createChart([10, 6], nomes_fundos, maiores_valores, valores_cota, cnpjs_fundos)
         _=1
 
         #s3 = client.createClient('s3')
