@@ -77,14 +77,17 @@ class TransformData:
     def gettingMonthlyReturn(self, dados_fundos: pd.DataFrame):
         generalData = []
         for dados in dados_fundos:
-            data_inicio_mes = (dados['DT_COMPTC'].sort_values(ascending = True).unique())[0]
-            data_fim_mes = (dados['DT_COMPTC'].sort_values(ascending = True).unique())[-1]
-            generalData.append(dados[(dados['DT_COMPTC'].isin([data_inicio_mes, data_fim_mes]))])
-            #data_inicio_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[0]
-            #data_fim_mes = (dados_fundos['DT_COMPTC'].sort_values(ascending = True).unique())[-1]
+            #data_inicio_mes = (dados['DT_COMPTC'].sort_values(ascending = True).unique())[0]
+            #data_fim_mes = (dados['DT_COMPTC'].sort_values(ascending = True).unique())[-1]
+            #generalData.append(dados[(dados['DT_COMPTC'].isin([data_inicio_mes, data_fim_mes]))])
+            generalData.append(dados)
         return generalData
     
     def ajustingColumns(self, base_final: pd.DataFrame):
-        base_final['DENOM_SOCIAL'] = base_final['DENOM_SOCIAL'].apply(lambda x: generalTools.cleaningDataStr(x) if pd.notnull(x) else x)
+        base_final['DENOM_SOCIAL'] = base_final['DENOM_SOCIAL'].map(lambda x: generalTools.barToNull(generalTools.cleaningDataStr(x)), na_action='ignore')
+        base_final['DT_COMPTC'] = pd.to_datetime(base_final['DT_COMPTC'])
+        base_final = base_final.query('VL_TOTAL > 0 and VL_PATRIM_LIQ > 0 and VL_QUOTA > 0')
 
+        base_final.reset_index(inplace=True)
+        base_final = base_final.drop('index', axis=1)
         return base_final

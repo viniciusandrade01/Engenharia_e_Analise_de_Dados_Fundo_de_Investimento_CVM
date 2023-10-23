@@ -32,7 +32,7 @@ class GeneralTools:
         return dado.replace("-","")
     
     def barToNull(self, dado: str):
-        return dado.replace("-","")
+        return dado.replace("/"," ")
 
     def plusToNull(self, dado: str):
         return dado.replace("+","")
