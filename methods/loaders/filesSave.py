@@ -111,6 +111,7 @@ class FileSavers:
         return base_final[['CNPJ_FUNDO', 'DENOM_SOCIAL', 'TP_FUNDO', 'DT_COMPTC', 'VL_TOTAL', 'VL_QUOTA', 'VL_PATRIM_LIQ', 'NR_COTST']]
     
     def gettingTheBestInvestmentFunds(self, base_final: pd.DataFrame, range: int):
+        aux_base = base_final
         # Usando, como referência e parâmetro, o último dia como dia 30, e removendo duplicados
         base_final = base_final[pd.to_datetime(base_final['DT_COMPTC']).dt.day == 30]
 
@@ -120,4 +121,4 @@ class FileSavers:
         valores_cota = base_final.loc[maiores_valores.index, 'VL_QUOTA']
         cnpjs_fundos = base_final.loc[maiores_valores.index, 'CNPJ_FUNDO']
         
-        return maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos
+        return maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos, maiores_valores.index, aux_base[aux_base['DENOM_SOCIAL'].isin(nomes_fundos)].index

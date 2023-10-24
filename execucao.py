@@ -22,7 +22,7 @@ def main():
         jsonData = generalTools.openJson()
         logger_config.setup_logger(generalTools.getDate())
         
-        # CONFIGURANDO PARA 4 CASAS DECIMAIS A FORMATAÇÃO E EXIBIÇÃO DOS N°S DE PONTO FLUTUANTE 
+        # Configurando para 4 casas decimais a formatação e exibição dos n°s com ponto flutuante
         pd.options.display.float_format = '{:.4f}'.format
 
         name_directory = f"{jsonData['source']['generalLink']['params']['directory']}{generalTools.hyphenToNull(generalTools.splitByEmptySpace(generalTools.getDate())[0])}"
@@ -39,15 +39,22 @@ def main():
             zip_file = webPageDataScrapers.readZipFile(file, name_directory)
             dados_fundos.append(fileSavers.readDeepData(zip_file))
 
-        #dados_fundos = fileSavers.readDeepData(zip_file)
         dados_cadastro = fileSavers.readRegistrationData()
         dados_fundos_filtrado = transformData.gettingMonthlyReturn(dados_fundos)
         base_final = fileSavers.mergeDataFrames(dados_fundos_filtrado, dados_cadastro)
-        maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos = fileSavers.gettingTheBestInvestmentFunds(base_final, jsonData['source']['generalLink']['params']['toprange'])
+        maiores_valores, nomes_fundos, valores_cota, cnpjs_fundos, index, historical_data = fileSavers.gettingTheBestInvestmentFunds(base_final, jsonData['source']['generalLink']['params']['toprange'])
         base_final = transformData.ajustingColumns(base_final)
+
+        # Análise dos 'toprange' (inseridos no data.json) fundos com maiores patrimônios líquidos
         generalCharts.createBarhChart([10, 6], nomes_fundos, cnpjs_fundos, maiores_valores, dataRef, name_directory, jsonData['source']['generalLink']['params']['toprange'])
-        #generalCharts.createChart([10, 6], nomes_fundos, maiores_valores, valores_cota, cnpjs_fundos)
-        _=1
+
+        # Análise da Evolução do Valor Patrimonial Líquido dos 'toprange' ao Longo do Tempo
+        # CONTINUAR
+        generalCharts.netAssetValueEvolution([10, 8], base_final, 'DENOM_SOCIAL', 'TP_FUNDO', 'Evolução do Valor Patrimonial Líquido', 'Tipo de Fundo', 'Número de Fundos', 90, dataRef, name_directory)
+
+        # Análise da Distribuição dos Tipos de Fundos (TP_FUNDO)
+        generalCharts.barChart([10, 8], base_final, 'DENOM_SOCIAL', 'TP_FUNDO', 'Distribuição dos Tipos de Fundos', 'Tipo de Fundo', 'Número de Fundos', 45, dataRef, name_directory)
+        
 
         #s3 = client.createClient('s3')
         #localfile = f"{name_directory}/{fileName}.{file_type}"

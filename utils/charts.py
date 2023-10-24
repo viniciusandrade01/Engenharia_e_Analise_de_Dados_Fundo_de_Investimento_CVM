@@ -8,10 +8,21 @@ class GeneralCharts:
     def __init__(self):
         self.data = generalTools.getDate()
 
-    def createBoxChart(self, df: pd.DataFrame, column: str, size: list, title: str, colors: str):
+    def barChart(self, size: list, base_final: pd.DataFrame, duplicado: str, colref: str, title: str, xlab: str, ylab: str, xtick: int, data: str, nameDirectory: str):
+        base_final = base_final.drop_duplicates(subset=duplicado)[colref].value_counts()
         plt.figure(figsize=(size[0], size[1]))
-        sns.boxplot(y=column, data=df, color=colors)
-        plt.title(title)
+        plt.bar(pd.Series(base_final.index), pd.Series(base_final.values), color='skyblue')
+        plt.title(f"{title} ({data})")
+        plt.xlabel(xlab)
+        plt.ylabel(ylab)
+        plt.xticks(rotation=xtick)
+        plt.yscale('log')
+        plt.grid(axis='y', linestyle='--', alpha=1)
+        for i, v in enumerate(base_final.values):
+            plt.text(i, v + 0.5, str(v), ha='center')
+
+        plt.tight_layout()
+        plt.savefig(f"{nameDirectory}/DistribuicaoTiposFundos_{data}.png")
         plt.show()
         
     def createBarhChart(self, size: list, fundos, cnpjs_fundos, patrimonio_liquido, data, nameDirectory, toprange):
@@ -33,25 +44,15 @@ class GeneralCharts:
         plt.savefig(f"{nameDirectory}/MelhoresFundos_{data}.png")
         plt.show() 
 
-    def createChart(self, size: list, nomes_fundos, cinco_maiores_valores, valores_cota, cnpjs_fundos):
-        # Cria o gráfico de barras
+    def netAssetValueEvolution(self, size: list, base_final: pd.DataFrame, duplicado: str, colref: str, title: str, xlab: str, ylab: str, xtick: int, data: str, nameDirectory: str):
+        # Converter a coluna 'DT_COMPTC' para o formato de data
+        base_final['DT_COMPTC'] = pd.to_datetime(base_final['DT_COMPTC'])
+
+        # Criar um gráfico de linha para mostrar a evolução do valor patrimonial líquido ao longo do tempo
         plt.figure(figsize=(size[0], size[1]))
-        bars = plt.bar(nomes_fundos, cinco_maiores_valores, color='skyblue')
-
-        # Adiciona o nome do fundo ao passar o mouse sobre a barra
-        plt.xticks(rotation=45, ha='right')
-        plt.ylabel('Valor do Patrimônio Líquido')
-
-        # Adiciona os rótulos em cima das barras
-        plt.bar_label(bars, labels=[f'{valor:.2f}\n{cnpj}\n{nome}' for valor, cnpj, nome in zip(cinco_maiores_valores, cnpjs_fundos, nomes_fundos)], 
-                    label_type='edge', fontsize=8)
-
-        # Adiciona o valor da cota e o nome do fundo sobre cada barra
-        #for i, valor in enumerate(cinco_maiores_valores):
-        #    plt.text(i, valor + 0.1, f'Valor: {valor}\nCota: {valores_cota.iloc[i]}', ha='center')
-
-        plt.xlabel('Nome do Fundo')
-        plt.title('5 Maiores Valores de Patrimônio Líquido')
-        plt.tight_layout()
-        plt.savefig(f"bla.png")
-        plt.show() 
+        # Calcular o valor médio do patrimônio líquido para cada data e plotando
+        base_final.groupby('DT_COMPTC')['VL_PATRIM_LIQ'].mean().plot()
+        plt.title('Evolução do Valor Patrimonial Líquido ao Longo do Tempo')
+        plt.xlabel('Data')
+        plt.ylabel('Valor Patrimonial Líquido Médio')
+        plt.show()
