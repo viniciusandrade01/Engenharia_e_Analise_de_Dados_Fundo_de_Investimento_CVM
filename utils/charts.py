@@ -44,15 +44,40 @@ class GeneralCharts:
         plt.savefig(f"{nameDirectory}/MelhoresFundos_{data}.png")
         plt.show() 
 
-    def netAssetValueEvolution(self, size: list, base_final: pd.DataFrame, duplicado: str, colref: str, title: str, xlab: str, ylab: str, xtick: int, data: str, nameDirectory: str):
-        # Converter a coluna 'DT_COMPTC' para o formato de data
-        base_final['DT_COMPTC'] = pd.to_datetime(base_final['DT_COMPTC'])
+    def netAssetValueEvolution(self, size: list, base_final: pd.DataFrame, title: str, xlab: str, ylab: str, xtick: int, data: str, nameDirectory: str, fundos, cnpjs_fundos, patrimonio_liquido):
 
-        # Criar um gráfico de linha para mostrar a evolução do valor patrimonial líquido ao longo do tempo
-        plt.figure(figsize=(size[0], size[1]))
-        # Calcular o valor médio do patrimônio líquido para cada data e plotando
-        base_final.groupby('DT_COMPTC')['VL_PATRIM_LIQ'].mean().plot()
-        plt.title('Evolução do Valor Patrimonial Líquido ao Longo do Tempo')
-        plt.xlabel('Data')
-        plt.ylabel('Valor Patrimonial Líquido Médio')
-        plt.show()
+        # Configurar o gráfico
+        fig, ax1 = plt.subplots(figsize=(size[0], size[1]))
+
+        # Plotar os valores patrimoniais de cada CNPJ em relação às datas no eixo Y à direita
+        for i, cnpj in enumerate(cnpjs_fundos):
+            dados_cnpj = base_final[base_final['CNPJ_FUNDO'] == cnpj]
+            ax1.plot(dados_cnpj['DT_COMPTC'], dados_cnpj['VL_PATRIM_LIQ'], marker='o', linestyle='-', label=f'CNPJ: {cnpj}')
+
+        ax1.set_xlabel(f'{xlab}')
+        ax1.set_ylabel(f'{ylab}', color='black')
+        ax1.tick_params(axis='y', labelcolor='black')
+        ax1.legend(loc='best', bbox_to_anchor=(1, 1), title='Legenda')
+
+        ## Adicionar CNPJs no eixo Y à esquerda
+        #ax2 = ax1.twinx()
+        #ax2.set_ylabel('CNPJs', color='black')
+        #ax2.set_yticks(range(len(cnpjs_fundos)))
+        #ax2.set_yticklabels(cnpjs_fundos)  # Mostra apenas os primeiros 5 CNPJs para evitar #muitas linhas no gráfico
+        #ax2.tick_params(axis='y', labelcolor='black')
+
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.grid(axis='x', linestyle='--', alpha=0.7)
+
+        # Rotacionar as datas para melhor visualização
+        plt.xticks(rotation=xtick)
+
+        # Adicionar rótulo ao gráfico
+        plt.title(f'{title} ({data})')
+        plt.tight_layout()
+
+        # Gravar o gráfico
+        plt.savefig(f"{nameDirectory}/EvoluçãoPatr.Líq.MelhoresFundos_{data}.png")
+        
+        # Exibir o gráfico
+        plt.show() 

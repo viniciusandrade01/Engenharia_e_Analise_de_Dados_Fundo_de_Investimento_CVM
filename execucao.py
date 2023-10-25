@@ -49,11 +49,13 @@ def main():
         generalCharts.createBarhChart([10, 6], nomes_fundos, cnpjs_fundos, maiores_valores, dataRef, name_directory, jsonData['source']['generalLink']['params']['toprange'])
 
         # Análise da Evolução do Valor Patrimonial Líquido dos 'toprange' ao Longo do Tempo
-        # CONTINUAR
-        generalCharts.netAssetValueEvolution([10, 8], base_final, 'DENOM_SOCIAL', 'TP_FUNDO', 'Evolução do Valor Patrimonial Líquido', 'Tipo de Fundo', 'Número de Fundos', 90, dataRef, name_directory)
+        generalCharts.netAssetValueEvolution([10, 8], base_final, 'Evolução do Valor Patrimonial Líquido', 'Datas Base', 'Valores Patrimoniais Líquidos', 90, dataRef, name_directory, nomes_fundos, cnpjs_fundos, maiores_valores)
 
-        # Análise da Distribuição dos Tipos de Fundos (TP_FUNDO)
-        generalCharts.barChart([10, 8], base_final, 'DENOM_SOCIAL', 'TP_FUNDO', 'Distribuição dos Tipos de Fundos', 'Tipo de Fundo', 'Número de Fundos', 45, dataRef, name_directory)
+        # Análise da Distribuição dos Tipos de Fundos ocupados no 'toprange' (TP_FUNDO)
+        generalCharts.barChart([10, 8], base_final, 'DENOM_SOCIAL', 'TP_FUNDO', 'Distribuição  dos Tipos de Fundos do TopRange', 'Tipo de Fundo', 'Quantidade por Tipo Fundos', 45, dataRef, name_directory)
+
+        # Análise da Distribuição Geral dos Tipos de Fundos (TP_FUNDO)
+        generalCharts.barChart([10, 8], base_final, 'DENOM_SOCIAL', 'TP_FUNDO', 'Distribuição Geral dos Tipos de Fundos', 'Tipo de Fundo', 'Número de Fundos', 45, dataRef, name_directory)
         
 
         #s3 = client.createClient('s3')
