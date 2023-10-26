@@ -57,7 +57,6 @@ def main():
         # Análise da Distribuição Geral dos Tipos de Fundos (TP_FUNDO)
         generalCharts.barChart([10, 8], base_final, 'DENOM_SOCIAL', 'TP_FUNDO', 'Distribuição Geral dos Tipos de Fundos', 'Tipo de Fundo', 'Número de Fundos', 45, dataRef, name_directory)
         
-
         #s3 = client.createClient('s3')
         #localfile = f"{name_directory}/{fileName}.{file_type}"
         #client.uploadFile(s3, localfile, 'engdadostest', localfile)

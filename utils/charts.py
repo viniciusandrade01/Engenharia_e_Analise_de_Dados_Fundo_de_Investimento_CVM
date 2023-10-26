@@ -2,6 +2,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 from utils.tools import GeneralTools
+import mplcursors
+
 generalTools = GeneralTools()
 
 class GeneralCharts:
@@ -52,19 +54,12 @@ class GeneralCharts:
         # Plotar os valores patrimoniais de cada CNPJ em relação às datas no eixo Y à direita
         for i, cnpj in enumerate(cnpjs_fundos):
             dados_cnpj = base_final[base_final['CNPJ_FUNDO'] == cnpj]
-            ax1.plot(dados_cnpj['DT_COMPTC'], dados_cnpj['VL_PATRIM_LIQ'], marker='o', linestyle='-', label=f'CNPJ: {cnpj}')
+            line, = ax1.plot(dados_cnpj['DT_COMPTC'], dados_cnpj['VL_PATRIM_LIQ'], marker='o', linestyle='-', label=f'CNPJ: {cnpj}')
 
         ax1.set_xlabel(f'{xlab}')
         ax1.set_ylabel(f'{ylab}', color='black')
         ax1.tick_params(axis='y', labelcolor='black')
         ax1.legend(loc='best', bbox_to_anchor=(1, 1), title='Legenda')
-
-        ## Adicionar CNPJs no eixo Y à esquerda
-        #ax2 = ax1.twinx()
-        #ax2.set_ylabel('CNPJs', color='black')
-        #ax2.set_yticks(range(len(cnpjs_fundos)))
-        #ax2.set_yticklabels(cnpjs_fundos)  # Mostra apenas os primeiros 5 CNPJs para evitar #muitas linhas no gráfico
-        #ax2.tick_params(axis='y', labelcolor='black')
 
         plt.grid(axis='y', linestyle='--', alpha=0.7)
         plt.grid(axis='x', linestyle='--', alpha=0.7)
@@ -76,8 +71,11 @@ class GeneralCharts:
         plt.title(f'{title} ({data})')
         plt.tight_layout()
 
+        # Adicionar tooltips usando mplcursors
+        mplcursors.cursor(hover=True).connect("add", lambda sel: sel.annotation.set_text(f'Valor:   {sel.artist.get_ydata()[sel.target.index]}'))
+
         # Gravar o gráfico
         plt.savefig(f"{nameDirectory}/EvoluçãoPatr.Líq.MelhoresFundos_{data}.png")
-        
+
         # Exibir o gráfico
-        plt.show() 
+        plt.show()
