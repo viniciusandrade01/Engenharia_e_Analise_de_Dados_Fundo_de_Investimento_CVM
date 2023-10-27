@@ -10,7 +10,7 @@ class GeneralCharts:
     def __init__(self):
         self.data = generalTools.getDate()
 
-    def barChart(self, size: list, base_final: pd.DataFrame, duplicado: str, colref: str, title: str, xlab: str, ylab: str, xtick: int, data: str, nameDirectory: str):
+    def barChart(self, size: list, base_final: pd.DataFrame, duplicado: str, colref: str, title: str, xlab: str, ylab: str, xtick: int, data: str, nameDirectory: str, nameFile: str):
         base_final = base_final.drop_duplicates(subset=duplicado)[colref].value_counts()
         plt.figure(figsize=(size[0], size[1]))
         plt.bar(pd.Series(base_final.index), pd.Series(base_final.values), color='skyblue')
@@ -24,7 +24,7 @@ class GeneralCharts:
             plt.text(i, v + 0.5, str(v), ha='center')
 
         plt.tight_layout()
-        plt.savefig(f"{nameDirectory}/DistribuicaoTiposFundos_{data}.png")
+        plt.savefig(f"{nameDirectory}/{nameFile}_{data}.png")
         plt.show()
         
     def createBarhChart(self, size: list, fundos, cnpjs_fundos, patrimonio_liquido, data, nameDirectory, toprange):
@@ -75,7 +75,7 @@ class GeneralCharts:
         mplcursors.cursor(hover=True).connect("add", lambda sel: sel.annotation.set_text(f'Valor:   {sel.artist.get_ydata()[sel.target.index]}'))
 
         # Gravar o gráfico
-        plt.savefig(f"{nameDirectory}/EvoluçãoPatr.Líq.MelhoresFundos_{data}.png")
+        plt.savefig(f"{nameDirectory}/EvolucaoPatrLiqMelhoresFundos_{data}.png")
 
         # Exibir o gráfico
         plt.show()
