@@ -1,13 +1,13 @@
 {
     "source": {
         "generalLink": {
-            "url":"https://www.leroymerlin.com.br/",
+            "url":"https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/",
             "params": {
-                "year": "2023",          
-                "month": "03",
-                "directory": "blo",
-                "namehtml": "Html_"
-                
+                "year": "2022",          
+                "month": "12",
+                "directory": "Dados_CVM_",
+                "namezip": "inf_diario_fi_",
+                "toprange": 15
             },
             "filetype":"csv",
             "bla": ["", "", ""],
