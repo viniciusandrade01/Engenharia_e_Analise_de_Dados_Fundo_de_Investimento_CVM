@@ -16,72 +16,42 @@ class FileSavers:
 
     def openingSheets(self, directory: str, sheet: str, rows: int, footer: int):
         return pd.read_excel(f"{directory}", sheet_name=f"{sheet}", skiprows=rows, skipfooter=footer)
-
-    def generateFile(self, novo_df: pd.DataFrame, file_type, diretorio, sep, fileName, columnsList: list, ofertas):
-
-        novo_df = novo_df[columnsList]
-
-        generalTools.makeDirectory(diretorio)
-        diretorio = f"{diretorio}/{fileName}"
-
-        if ofertas != "":
-            novo_df = novo_df[novo_df['Situacao'] == 'Oferta']
     
-        novo_df = novo_df.reset_index()
-        novo_df.drop("index", axis=1, inplace=True)
+    def dfToCsv(self, df: pd.DataFrame, file_name: str, separator: str):
+        df.to_csv(file_name, sep=separator, index=False)
+        logging.info("CONVERSÃO DO DATAFRAME PARA TIPO EXCEL REALIZADA COM SUCESSO.")
+        return df.to_csv()
 
-        #generalCharts.createBoxChart(novo_df, 'Preco_Original', [8, 6], 'Gráfico de Caixa - Preço Original', 'blue')
-
-        #createBoxChart(novo_df, 'Preco_A_Vista', [8, 6], 'Gráfico de Caixa - Preço à Vista', 'orange')
-
-        if file_type == 'csv':
-            novo_df.to_csv(f"{diretorio}.csv", sep=f"{sep}", index=False)
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO CSV.") 
-            return
-        
-        elif file_type == 'excel':
-            novo_df.to_excel(f"{diretorio}.xlsx", index=False)
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO EXCEL.")
-            return
-        
-        elif file_type == 'json':
-            novo_df.to_json(f"{diretorio}.json", orient='records')
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO JSON.")
-            return
-        
-        elif file_type == 'parquet':
-            novo_df.to_parquet(f"{diretorio}.parquet", index=False)
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO PARQUET.")
-            return
-        
-        elif file_type == 'hdf':
-            novo_df.to_hdf(f"{diretorio}.h5", key='data')
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO HDF5/H5.")
-            return
-        
-        elif file_type == 'pickle':
-            novo_df.to_pickle(f"{diretorio}.pkl")
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO PICKLE.")
-            return
-        
-        elif file_type == 'feather':
-            novo_df.to_feather(f"{diretorio}.feather")
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO FEATHER.")
-            return
-        
-        elif file_type == 'avro':
-            with open(f"{diretorio}.avro", 'wb') as out_avro:
-                fastavro.writer(out_avro, novo_df.to_dict(orient='records'))
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO AVRO.")
-            return
-        
-        elif file_type == 'html':
-            novo_df.to_html(f"{diretorio}.html", index=False)
-            logging.info(f"DATAFRAME SALVO COMO {fileName} EM FORMATO HTML.")
-            return
-        
-        else:
-            logging.info("TIPO DE ARQUIVO NÃO SUPORTADO. ESCOLHA UM FORMATO VÁLIDO.")
+    def dfToExcel(self, df: pd.DataFrame, file_name: str, sheet_name='Sheet1'):
+        df.to_excel(file_name, sheet_name=sheet_name, index=False)
+        logging.info("CONVERSÃO DO DATAFRAME PARA TIPO EXCEL REALIZADA COM SUCESSO.")
+        return df.to_excel()
+    
+    def dfToJson(self, df: pd.DataFrame, file_name: str):
+        df.to_json(file_name, orient='records')
+        logging.info("CONVERSÃO DO DATAFRAME PARA TIPO JSON REALIZADA COM SUCESSO.")
+        return df.to_json()
+    
+    def dfToParquet(self, df: pd.DataFrame, file_name: str):
+        df.to_parquet(file_name, index=False)
+        logging.info("CONVERSÃO DO DATAFRAME PARA TIPO PARQUET REALIZADA COM SUCESSO.")
+        return df.to_parquet()
+    
+    def df_to_pickle(self, df: pd.DataFrame, file_name: str):
+        df.to_pickle(file_name)
+        logging.info("CONVERSÃO DO DATAFRAME PARA TIPO PICKLE REALIZADA COM SUCESSO.")
+        return df.to_pickle()
+    
+    def df_to_avro(self, df: pd.DataFrame, file_name: str):
+        with open(file_name, 'wb') as out_avro:
+            fastavro.writer(out_avro, df.to_dict(orient='records'))
+            logging.info("CONVERSÃO DO DATAFRAME PARA TIPO AVRO REALIZADA COM SUCESSO.")
+        return df
+    
+    def df_to_html(self, df: pd.DataFrame, file_name: str):
+        df.to_html(file_name, index=False)
+        logging.info("CONVERSÃO DO DATAFRAME PARA TIPO HTML REALIZADA COM SUCESSO.")
+        return df.to_html()
 
     def concatDataFrame(self, df: pd.DataFrame, dictionary: dict, index: int):
         try:

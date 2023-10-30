@@ -16,31 +16,6 @@ class TransformData:
     def __init__(self):
         self.data = generalTools.splitByEmptySpace(generalTools.getDate())[0]
 
-    def dfToExcel(self, df: pd.DataFrame, file_name: str, sheet_name='Sheet1'):
-        df.to_excel(file_name, sheet_name=sheet_name, index=False)
-        return df.to_excel()
-    
-    def dfToJson(self, df: pd.DataFrame, file_name: str):
-        df.to_json(file_name, orient='records')
-        return df.to_json()
-    
-    def dfToParquet(self, df: pd.DataFrame, file_name: str):
-        df.to_parquet(file_name, index=False)
-        return df.to_parquet()
-    
-    def df_to_pickle(self, df: pd.DataFrame, file_name: str):
-        df.to_pickle(file_name)
-        return df.to_pickle()
-    
-    def df_to_avro(self, df: pd.DataFrame, file_name: str):
-        with open(file_name, 'wb') as out_avro:
-            fastavro.writer(out_avro, df.to_dict(orient='records'))
-        return df
-    
-    def df_to_html(self, df: pd.DataFrame, file_name: str):
-        df.to_html(file_name, index=False)
-        return df.to_html()
-
     def selectingData(self, df: pd.DataFrame, title: str, data: list):
         return df[df[title].isin(data)]
     
